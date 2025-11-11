@@ -10,7 +10,7 @@ env:
   GCP_REGION: ${{ secrets.GCP_REGION }}
   SERVICE_ACCOUNT_EMAIL: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
   WIF_PROVIDER: ${{ secrets.WIF_PROVIDER }}
-  ARTIFACT_REPOSITORY: ${{ vars.ARTIFACT_REPOSITORY || 'ecommerce-services' }}
+  ARTIFACT_REPOSITORY: ${{ vars.ARTIFACT_REPOSITORY || 'spring-repo' }}
   IMAGE_TAG: ${{ github.sha }}
   CATALOG_SERVICE_BASE_URL: ${{ secrets.CATALOG_SERVICE_BASE_URL }}
   USERS_SERVICE_BASE_URL: ${{ secrets.USERS_SERVICE_BASE_URL }}
