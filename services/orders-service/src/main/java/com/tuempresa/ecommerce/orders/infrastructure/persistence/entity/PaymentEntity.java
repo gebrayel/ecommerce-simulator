@@ -34,6 +34,18 @@ public class PaymentEntity {
     @Column(name = "status", nullable = false)
     private Payment.Status status;
 
+    @Column(name = "credit_card_id")
+    private Long creditCardId;
+
+    @Column(name = "card_token_id", length = 64)
+    private String cardTokenId;
+
+    @Column(name = "card_last_four", length = 4)
+    private String cardLastFour;
+
+    @Column(name = "attempts", nullable = false)
+    private Integer attempts;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -48,6 +60,10 @@ public class PaymentEntity {
                          BigDecimal amount,
                          String method,
                          Payment.Status status,
+                         Long creditCardId,
+                         String cardTokenId,
+                         String cardLastFour,
+                         Integer attempts,
                          LocalDateTime createdAt,
                          LocalDateTime updatedAt) {
         this.id = id;
@@ -55,6 +71,10 @@ public class PaymentEntity {
         this.amount = amount;
         this.method = method;
         this.status = status;
+        this.creditCardId = creditCardId;
+        this.cardTokenId = cardTokenId;
+        this.cardLastFour = cardLastFour;
+        this.attempts = attempts;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -97,6 +117,38 @@ public class PaymentEntity {
 
     public void setStatus(Payment.Status status) {
         this.status = status;
+    }
+
+    public Long getCreditCardId() {
+        return creditCardId;
+    }
+
+    public void setCreditCardId(Long creditCardId) {
+        this.creditCardId = creditCardId;
+    }
+
+    public String getCardTokenId() {
+        return cardTokenId;
+    }
+
+    public void setCardTokenId(String cardTokenId) {
+        this.cardTokenId = cardTokenId;
+    }
+
+    public String getCardLastFour() {
+        return cardLastFour;
+    }
+
+    public void setCardLastFour(String cardLastFour) {
+        this.cardLastFour = cardLastFour;
+    }
+
+    public Integer getAttempts() {
+        return attempts;
+    }
+
+    public void setAttempts(Integer attempts) {
+        this.attempts = attempts;
     }
 
     public LocalDateTime getCreatedAt() {

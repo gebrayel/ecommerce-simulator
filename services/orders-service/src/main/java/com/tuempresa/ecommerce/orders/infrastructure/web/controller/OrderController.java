@@ -28,7 +28,7 @@ public class OrderController {
     public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody CreateOrderRequest request) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(OrderWebMapper.toResponse(orderUseCase.createFromCart(request.getCartId())));
+                .body(OrderWebMapper.toResponse(orderUseCase.createFromCart(request.getCartId(), request.getDeliveryAddress())));
     }
 
     @PostMapping("/{orderId}/pay")

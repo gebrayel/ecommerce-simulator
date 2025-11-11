@@ -15,6 +15,10 @@ public class PaymentMapper {
         entity.setAmount(payment.getAmount());
         entity.setMethod(payment.getMethod());
         entity.setStatus(payment.getStatus());
+        entity.setCreditCardId(payment.getCreditCardId());
+        entity.setCardTokenId(payment.getCardTokenId());
+        entity.setCardLastFour(payment.getCardLastFour());
+        entity.setAttempts(payment.getAttempts());
         entity.setCreatedAt(payment.getCreatedAt());
         entity.setUpdatedAt(payment.getUpdatedAt());
         return entity;
@@ -27,6 +31,10 @@ public class PaymentMapper {
                 entity.getAmount(),
                 entity.getMethod(),
                 entity.getStatus(),
+                entity.getCreditCardId(),
+                entity.getCardTokenId(),
+                entity.getCardLastFour(),
+                entity.getAttempts() != null ? entity.getAttempts() : 0,
                 entity.getCreatedAt(),
                 entity.getUpdatedAt()
         );

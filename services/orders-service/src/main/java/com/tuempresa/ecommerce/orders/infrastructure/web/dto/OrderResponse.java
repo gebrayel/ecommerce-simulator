@@ -10,6 +10,7 @@ public class OrderResponse {
 
     private Long id;
     private Long userId;
+    private String deliveryAddress;
     private List<OrderItemResponse> items;
     private BigDecimal total;
     private Order.Status status;
@@ -21,6 +22,7 @@ public class OrderResponse {
 
     public OrderResponse(Long id,
                          Long userId,
+                         String deliveryAddress,
                          List<OrderItemResponse> items,
                          BigDecimal total,
                          Order.Status status,
@@ -28,6 +30,7 @@ public class OrderResponse {
                          LocalDateTime updatedAt) {
         this.id = id;
         this.userId = userId;
+        this.deliveryAddress = deliveryAddress;
         this.items = items;
         this.total = total;
         this.status = status;
@@ -49,6 +52,14 @@ public class OrderResponse {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getDeliveryAddress() {
+        return deliveryAddress;
+    }
+
+    public void setDeliveryAddress(String deliveryAddress) {
+        this.deliveryAddress = deliveryAddress;
     }
 
     public List<OrderItemResponse> getItems() {

@@ -17,6 +17,7 @@ public class Order {
 
     private Long id;
     private Long userId;
+    private String deliveryAddress;
     private List<OrderItem> items;
     private BigDecimal total;
     private Status status;
@@ -31,6 +32,7 @@ public class Order {
 
     public Order(Long id,
                  Long userId,
+                 String deliveryAddress,
                  List<OrderItem> items,
                  BigDecimal total,
                  Status status,
@@ -38,6 +40,7 @@ public class Order {
                  LocalDateTime updatedAt) {
         this.id = id;
         this.userId = userId;
+        this.deliveryAddress = deliveryAddress;
         this.items = new ArrayList<>(items);
         this.total = total;
         this.status = status;
@@ -45,8 +48,9 @@ public class Order {
         this.updatedAt = updatedAt;
     }
 
-    public Order(Long userId, List<OrderItem> items, BigDecimal total) {
+    public Order(Long userId, String deliveryAddress, List<OrderItem> items, BigDecimal total) {
         this.userId = userId;
+        this.deliveryAddress = deliveryAddress;
         this.items = new ArrayList<>(items);
         this.total = total;
         this.status = Status.CREATED;
@@ -68,6 +72,14 @@ public class Order {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getDeliveryAddress() {
+        return deliveryAddress;
+    }
+
+    public void setDeliveryAddress(String deliveryAddress) {
+        this.deliveryAddress = deliveryAddress;
     }
 
     public List<OrderItem> getItems() {

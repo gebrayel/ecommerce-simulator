@@ -15,6 +15,7 @@ public class UserEntityMapper {
             entity.getName(),
             entity.getTelefono(),
             entity.getDireccion(),
+            entity.getPasswordHash(),
             entity.getCreatedAt()
         );
     }
@@ -29,6 +30,7 @@ public class UserEntityMapper {
             domain.getName(),
             domain.getTelefono(),
             domain.getDireccion(),
+            domain.getPasswordHash(),
             domain.getCreatedAt()
         );
         return entity;

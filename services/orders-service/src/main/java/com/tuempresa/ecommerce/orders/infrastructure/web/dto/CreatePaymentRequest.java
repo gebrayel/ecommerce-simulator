@@ -18,13 +18,17 @@ public class CreatePaymentRequest {
     @NotBlank
     private String method;
 
+    @NotBlank
+    private String cardToken;
+
     public CreatePaymentRequest() {
     }
 
-    public CreatePaymentRequest(Long orderId, BigDecimal amount, String method) {
+    public CreatePaymentRequest(Long orderId, BigDecimal amount, String method, String cardToken) {
         this.orderId = orderId;
         this.amount = amount;
         this.method = method;
+        this.cardToken = cardToken;
     }
 
     public Long getOrderId() {
@@ -49,6 +53,14 @@ public class CreatePaymentRequest {
 
     public void setMethod(String method) {
         this.method = method;
+    }
+
+    public String getCardToken() {
+        return cardToken;
+    }
+
+    public void setCardToken(String cardToken) {
+        this.cardToken = cardToken;
     }
 }
 

@@ -30,3 +30,11 @@ clients:
     base-url: http://localhost:8081/api/v1
   users:
     base-url: http://localhost:8082/api/v1
+
+security:
+  jwt:
+    secret: change-me-jwt-secret-please-change
+    issuer: ecommerce-simulator
+  card-token:
+    secret: change-me-card-token-secret
+  api-key: change-me-orders-api-key

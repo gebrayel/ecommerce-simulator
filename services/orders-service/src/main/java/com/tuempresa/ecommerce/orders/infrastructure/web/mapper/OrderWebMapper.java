@@ -17,6 +17,7 @@ public class OrderWebMapper {
         return new OrderResponse(
                 order.getId(),
                 order.getUserId(),
+                order.getDeliveryAddress(),
                 toItemResponses(order.getItems()),
                 order.getTotal(),
                 order.getStatus(),

@@ -29,6 +29,9 @@ public class OrderEntity {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
+    @Column(name = "delivery_address", nullable = false)
+    private String deliveryAddress;
+
     @ElementCollection
     @CollectionTable(name = "order_items", joinColumns = @JoinColumn(name = "order_id"))
     private List<OrderItemEmbeddable> items = new ArrayList<>();
@@ -51,6 +54,7 @@ public class OrderEntity {
 
     public OrderEntity(Long id,
                        Long userId,
+                       String deliveryAddress,
                        List<OrderItemEmbeddable> items,
                        BigDecimal total,
                        Order.Status status,
@@ -58,6 +62,7 @@ public class OrderEntity {
                        LocalDateTime updatedAt) {
         this.id = id;
         this.userId = userId;
+        this.deliveryAddress = deliveryAddress;
         this.items = items;
         this.total = total;
         this.status = status;
@@ -79,6 +84,14 @@ public class OrderEntity {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getDeliveryAddress() {
+        return deliveryAddress;
+    }
+
+    public void setDeliveryAddress(String deliveryAddress) {
+        this.deliveryAddress = deliveryAddress;
     }
 
     public List<OrderItemEmbeddable> getItems() {

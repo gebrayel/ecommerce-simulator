@@ -10,12 +10,14 @@ public class UserWebMapper {
         if (request == null) {
             return null;
         }
-        return new User(
+        User user = new User(
             request.getEmail(),
             request.getName(),
             request.getTelefono(),
             request.getDireccion()
         );
+        user.setRawPassword(request.getPassword());
+        return user;
     }
 
     public static UserResponse toResponse(User domain) {

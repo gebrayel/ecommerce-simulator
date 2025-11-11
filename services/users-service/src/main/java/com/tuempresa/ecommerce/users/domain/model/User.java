@@ -8,21 +8,33 @@ public class User {
     private String name;
     private String telefono;
     private String direccion;
+    private String passwordHash;
+    private transient String rawPassword;
     private LocalDateTime createdAt;
 
     public User() {
     }
 
-    public User(Long id, String email, String name, String telefono, String direccion, LocalDateTime createdAt) {
+    public User(Long id,
+                String email,
+                String name,
+                String telefono,
+                String direccion,
+                String passwordHash,
+                LocalDateTime createdAt) {
         this.id = id;
         this.email = email;
         this.name = name;
         this.telefono = telefono;
         this.direccion = direccion;
+        this.passwordHash = passwordHash;
         this.createdAt = createdAt;
     }
 
-    public User(String email, String name, String telefono, String direccion) {
+    public User(String email,
+                String name,
+                String telefono,
+                String direccion) {
         this.email = email;
         this.name = name;
         this.telefono = telefono;
@@ -69,6 +81,22 @@ public class User {
 
     public void setDireccion(String direccion) {
         this.direccion = direccion;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public String getRawPassword() {
+        return rawPassword;
+    }
+
+    public void setRawPassword(String rawPassword) {
+        this.rawPassword = rawPassword;
     }
 
     public LocalDateTime getCreatedAt() {

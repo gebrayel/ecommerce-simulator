@@ -1,5 +1,6 @@
 package com.tuempresa.ecommerce.users.application.service;
 
+import com.tuempresa.ecommerce.users.application.service.security.PasswordHashService;
 import com.tuempresa.ecommerce.users.domain.exception.DuplicateResourceException;
 import com.tuempresa.ecommerce.users.domain.exception.ResourceNotFoundException;
 import com.tuempresa.ecommerce.users.domain.model.User;
@@ -16,9 +17,11 @@ import java.util.Optional;
 public class UserService implements UserUseCase {
 
     private final UserRepositoryPort userRepositoryPort;
+    private final PasswordHashService passwordHashService;
 
-    public UserService(UserRepositoryPort userRepositoryPort) {
+    public UserService(UserRepositoryPort userRepositoryPort, PasswordHashService passwordHashService) {
         this.userRepositoryPort = userRepositoryPort;
+        this.passwordHashService = passwordHashService;
     }
 
     @Override
@@ -42,6 +45,11 @@ public class UserService implements UserUseCase {
         if (userRepositoryPort.existsByTelefono(user.getTelefono())) {
             throw new DuplicateResourceException("El teléfono ya está registrado: " + user.getTelefono());
         }
+        if (user.getRawPassword() == null || user.getRawPassword().isBlank()) {
+            throw new IllegalArgumentException("La contraseña es obligatoria");
+        }
+        user.setPasswordHash(passwordHashService.hash(user.getRawPassword()));
+        user.setRawPassword(null);
         return userRepositoryPort.save(user);
     }
 
@@ -71,6 +79,9 @@ public class UserService implements UserUseCase {
         existingUser.setEmail(user.getEmail());
         existingUser.setTelefono(user.getTelefono());
         existingUser.setDireccion(user.getDireccion());
+        if (user.getRawPassword() != null && !user.getRawPassword().isBlank()) {
+            existingUser.setPasswordHash(passwordHashService.hash(user.getRawPassword()));
+        }
 
         return userRepositoryPort.save(existingUser);
     }

@@ -17,6 +17,7 @@ public class OrderMapper {
         OrderEntity entity = new OrderEntity();
         entity.setId(order.getId());
         entity.setUserId(order.getUserId());
+        entity.setDeliveryAddress(order.getDeliveryAddress());
         entity.setItems(toEmbeddableList(order.getItems()));
         entity.setTotal(order.getTotal());
         entity.setStatus(order.getStatus());
@@ -29,6 +30,7 @@ public class OrderMapper {
         return new Order(
                 entity.getId(),
                 entity.getUserId(),
+                entity.getDeliveryAddress(),
                 toDomainList(entity.getItems()),
                 entity.getTotal(),
                 entity.getStatus(),

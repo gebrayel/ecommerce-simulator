@@ -3,6 +3,7 @@ package com.tuempresa.ecommerce.users.infrastructure.web.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 public class UserRequest {
     
@@ -20,14 +21,18 @@ public class UserRequest {
     @NotBlank(message = "La dirección es obligatoria")
     private String direccion;
 
+    @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres")
+    private String password;
+
     public UserRequest() {
     }
 
-    public UserRequest(String name, String email, String telefono, String direccion) {
+    public UserRequest(String name, String email, String telefono, String direccion, String password) {
         this.name = name;
         this.email = email;
         this.telefono = telefono;
         this.direccion = direccion;
+        this.password = password;
     }
 
     // Getters and Setters
@@ -61,6 +66,14 @@ public class UserRequest {
 
     public void setDireccion(String direccion) {
         this.direccion = direccion;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
 

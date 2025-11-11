@@ -30,7 +30,15 @@ public class OrderService implements OrderUseCase {
     }
 
     @Override
-    public Order createFromCart(Long cartId) {
+    public Order createFromCart(Long cartId, String deliveryAddress) {
+        if (deliveryAddress == null || deliveryAddress.isBlank()) {
+            throw new IllegalArgumentException("La dirección de entrega es obligatoria");
+        }
+        String normalizedAddress = deliveryAddress.trim();
+        if (normalizedAddress.isEmpty()) {
+            throw new IllegalArgumentException("La dirección de entrega es obligatoria");
+        }
+
         Cart cart = cartRepositoryPort.findById(cartId)
                 .orElseThrow(() -> new ResourceNotFoundException("Carrito no encontrado con ID: " + cartId));
 
@@ -46,7 +54,7 @@ public class OrderService implements OrderUseCase {
                 .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        Order order = new Order(cart.getUserId(), orderItems, total);
+        Order order = new Order(cart.getUserId(), normalizedAddress, orderItems, total);
         order.setCreatedAt(LocalDateTime.now());
         order.setUpdatedAt(LocalDateTime.now());
         Order savedOrder = orderRepositoryPort.save(order);

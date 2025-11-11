@@ -23,6 +23,9 @@ public class UserEntity {
     @Column(nullable = false)
     private String direccion;
 
+    @Column(name = "password_hash", nullable = false, length = 120)
+    private String passwordHash;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -36,12 +39,19 @@ public class UserEntity {
     public UserEntity() {
     }
 
-    public UserEntity(Long id, String email, String name, String telefono, String direccion, LocalDateTime createdAt) {
+    public UserEntity(Long id,
+                      String email,
+                      String name,
+                      String telefono,
+                      String direccion,
+                      String passwordHash,
+                      LocalDateTime createdAt) {
         this.id = id;
         this.email = email;
         this.name = name;
         this.telefono = telefono;
         this.direccion = direccion;
+        this.passwordHash = passwordHash;
         this.createdAt = createdAt;
     }
 
@@ -84,6 +94,14 @@ public class UserEntity {
 
     public void setDireccion(String direccion) {
         this.direccion = direccion;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
     public LocalDateTime getCreatedAt() {

@@ -4,7 +4,7 @@ import com.tuempresa.ecommerce.orders.domain.model.Order;
 
 public interface OrderUseCase {
 
-    Order createFromCart(Long cartId);
+    Order createFromCart(Long cartId, String deliveryAddress);
 
     Order findById(Long orderId);
 
