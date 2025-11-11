@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8083
 
 spring:
   main:
@@ -8,7 +8,7 @@ spring:
     servlet:
       path: /api/v1
   datasource:
-    url: jdbc:h2:mem:catalogdb
+    url: jdbc:h2:mem:ordersdb
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -24,3 +24,9 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+clients:
+  catalog:
+    base-url: http://localhost:8081/api/v1
+  users:
+    base-url: http://localhost:8082/api/v1
