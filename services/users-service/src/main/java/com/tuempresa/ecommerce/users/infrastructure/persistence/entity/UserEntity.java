@@ -1,11 +1,11 @@
-package com.tuempresa.ecommerce.users.entity;
+package com.tuempresa.ecommerce.users.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,20 +17,32 @@ public class User {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false, unique = true)
+    private String telefono;
+
+    @Column(nullable = false)
+    private String direccion;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDateTime.now();
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
     }
 
-    public User() {
+    public UserEntity() {
     }
 
-    public User(String email, String name) {
+    public UserEntity(Long id, String email, String name, String telefono, String direccion, LocalDateTime createdAt) {
+        this.id = id;
         this.email = email;
         this.name = name;
+        this.telefono = telefono;
+        this.direccion = direccion;
+        this.createdAt = createdAt;
     }
 
     // Getters and Setters
@@ -56,6 +68,22 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
     }
 
     public LocalDateTime getCreatedAt() {
