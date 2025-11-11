@@ -7,8 +7,6 @@ import com.tuempresa.ecommerce.catalog.domain.model.Product;
 import com.tuempresa.ecommerce.catalog.domain.model.SearchQuery;
 import com.tuempresa.ecommerce.catalog.domain.port.in.ProductUseCase;
 import com.tuempresa.ecommerce.catalog.domain.port.out.ProductRepositoryPort;
-import com.tuempresa.ecommerce.catalog.domain.port.out.SearchQueryRepositoryPort;
-import com.tuempresa.ecommerce.catalog.domain.port.out.CatalogSettingsRepositoryPort;
 import com.tuempresa.ecommerce.catalog.domain.port.out.CatalogSettingsRepositoryPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,15 +19,15 @@ import java.util.Optional;
 public class ProductService implements ProductUseCase {
 
     private final ProductRepositoryPort productRepositoryPort;
-    private final SearchQueryRepositoryPort searchQueryRepositoryPort;
     private final CatalogSettingsRepositoryPort catalogSettingsRepositoryPort;
+    private final SearchQueryLoggingService searchQueryLoggingService;
 
     public ProductService(ProductRepositoryPort productRepositoryPort,
-                          SearchQueryRepositoryPort searchQueryRepositoryPort,
-                          CatalogSettingsRepositoryPort catalogSettingsRepositoryPort) {
+                          CatalogSettingsRepositoryPort catalogSettingsRepositoryPort,
+                          SearchQueryLoggingService searchQueryLoggingService) {
         this.productRepositoryPort = productRepositoryPort;
-        this.searchQueryRepositoryPort = searchQueryRepositoryPort;
         this.catalogSettingsRepositoryPort = catalogSettingsRepositoryPort;
+        this.searchQueryLoggingService = searchQueryLoggingService;
     }
 
     @Override
@@ -46,7 +44,7 @@ public class ProductService implements ProductUseCase {
         PaginatedResult<Product> result = productRepositoryPort.findAll(sanitizedPage, sanitizedSize, normalizedSearch, minimumStock);
 
         SearchQuery searchQuery = new SearchQuery(normalizedSearch, sanitizedPage, sanitizedSize);
-        searchQueryRepositoryPort.save(searchQuery);
+        searchQueryLoggingService.logSearch(searchQuery);
 
         return result;
     }
