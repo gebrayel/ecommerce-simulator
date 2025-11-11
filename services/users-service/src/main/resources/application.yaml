@@ -2,6 +2,8 @@ server:
   port: 8082
 
 spring:
+  application:
+    name: users-service
   main:
     allow-bean-definition-overriding: true
   mvc:
@@ -30,7 +32,3 @@ security:
     secret: change-me-jwt-secret-please-change
     issuer: ecommerce-simulator
     expiration-minutes: 120
-
-eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaXNzIjoiZWNvbW1lcmNlLXNpbXVsYXRvciIsImlhdCI6MTc2Mjg3NjA1MiwiZXhwIjoxNzYyODgzMjUyLCJ1c2VySWQiOjEsImVtYWlsIjoiYW5hQGV4YW1wbGUuY29tIn0.rKGkioNlT8GjeztjS4FNX_90s-4v6Hy58rHXC1gdUBc
-
-    "token": "1.49e79c2a-16b8-41e1-b9de-a2fbb450aa70.CugcakM8eATZz91AjdUXi0kymRAjo9Iq0zpcs-XJN8M",
