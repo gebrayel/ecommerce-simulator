@@ -19,11 +19,12 @@ Este proyecto se organiza como un monorepo con los siguientes módulos:
 | Users Service   | 8082   | `http://localhost:8082/api/v1` |
 | Orders Service  | 8083   | `http://localhost:8083/api/v1` |
 
-> Todos los servicios exponen `GET /ping` en su respectiva base URL para verificaciones de salud.
+> Todos los servicios exponen `GET /ping` en su respectiva base URL para verificaciones de salud.  
+> Para automatizar los ejemplos, define en Postman (o en tus scripts) las variables `baseCatalogUrl`, `baseUsersUrl` y `baseOrdersUrl` con los valores de la tabla.
 
 ## Documentación de APIs
 
-### Catalog Service (`http://localhost:8081/api/v1`)
+### Catalog Service (`{{baseCatalogUrl}}`)
 
 #### Productos
 
@@ -31,7 +32,7 @@ Este proyecto se organiza como un monorepo con los siguientes módulos:
   `GET /catalog/products` con parámetros opcionales `page` (default `0`), `size` (default `10`) y `search`.
 
   ```bash
-  curl "http://localhost:8081/api/v1/catalog/products?page=0&size=5&search=camisa"
+  curl "{{baseCatalogUrl}}/catalog/products?page=0&size=5&search=camisa"
   ```
 
   ```json
@@ -59,14 +60,14 @@ Este proyecto se organiza como un monorepo con los siguientes módulos:
   `GET /catalog/products/{id}`
 
   ```bash
-  curl "http://localhost:8081/api/v1/catalog/products/1"
+  curl "{{baseCatalogUrl}}/catalog/products/1"
   ```
 
 - **Crear producto**  
   `POST /catalog/products`
 
   ```bash
-  curl -X POST "http://localhost:8081/api/v1/catalog/products" \
+  curl -X POST "{{baseCatalogUrl}}/catalog/products" \
     -H "Content-Type: application/json" \
     -d '{
       "name": "Zapatillas running",
@@ -109,19 +110,19 @@ Este proyecto se organiza como un monorepo con los siguientes módulos:
 - **Actualizar configuración**  
   `PUT /catalog/settings`
   ```bash
-  curl -X PUT "http://localhost:8081/api/v1/catalog/settings" \
+  curl -X PUT "{{baseCatalogUrl}}/catalog/settings" \
     -H "Content-Type: application/json" \
     -d '{ "minimumStock": 10 }'
   ```
 
-### Users Service (`http://localhost:8082/api/v1`)
+### Users Service (`{{baseUsersUrl}}`)
 
 #### Autenticación
 
 - **Login**  
   `POST /auth/login`
   ```bash
-  curl -X POST "http://localhost:8082/api/v1/auth/login" \
+  curl -X POST "{{baseUsersUrl}}/auth/login" \
     -H "Content-Type: application/json" \
     -d '{
       "email": "ana@example.com",
@@ -148,7 +149,7 @@ Este proyecto se organiza como un monorepo con los siguientes módulos:
   `POST /users`
 
   ```bash
-  curl -X POST "http://localhost:8082/api/v1/users" \
+  curl -X POST "{{baseUsersUrl}}/users" \
     -H "Content-Type: application/json" \
     -d '{
       "name": "Ana Pérez",
@@ -165,7 +166,7 @@ Este proyecto se organiza como un monorepo con los siguientes módulos:
 - **Eliminar usuario**  
   `DELETE /users/{id}` devuelve `204 No Content`.
 
-### Orders Service (`http://localhost:8083/api/v1`)
+### Orders Service (`{{baseOrdersUrl}}`)
 
 > Las operaciones de tarjetas (`/cards`) y pagos (`/payments`) requieren:
 >
@@ -178,7 +179,7 @@ Este proyecto se organiza como un monorepo con los siguientes módulos:
   `POST /carts`
 
   ```bash
-  curl -X POST "http://localhost:8083/api/v1/carts" \
+  curl -X POST "{{baseOrdersUrl}}/carts" \
     -H "Content-Type: application/json" \
     -d '{ "userId": 5 }'
   ```
@@ -187,7 +188,7 @@ Este proyecto se organiza como un monorepo con los siguientes módulos:
   `POST /carts/{cartId}/items`
 
   ```bash
-  curl -X POST "http://localhost:8083/api/v1/carts/10/items" \
+  curl -X POST "{{baseOrdersUrl}}/carts/10/items" \
     -H "Content-Type: application/json" \
     -d '{ "productId": 1, "quantity": 2 }'
   ```
@@ -225,7 +226,7 @@ Este proyecto se organiza como un monorepo con los siguientes módulos:
   `POST /orders`
 
   ```bash
-  curl -X POST "http://localhost:8083/api/v1/orders" \
+  curl -X POST "{{baseOrdersUrl}}/orders" \
     -H "Content-Type: application/json" \
     -d '{
       "cartId": 10,
@@ -248,7 +249,7 @@ Este proyecto se organiza como un monorepo con los siguientes módulos:
   `POST /payments` con cabeceras de seguridad.
 
   ```bash
-  curl -X POST "http://localhost:8083/api/v1/payments" \
+  curl -X POST "{{baseOrdersUrl}}/payments" \
     -H "Content-Type: application/json" \
     -H "x-api-key: change-me-orders-api-key" \
     -H "Authorization: Bearer <jwt>" \
@@ -275,7 +276,7 @@ Este proyecto se organiza como un monorepo con los siguientes módulos:
   `POST /cards` con cabeceras de seguridad.
 
   ```bash
-  curl -X POST "http://localhost:8083/api/v1/cards" \
+  curl -X POST "{{baseOrdersUrl}}/cards" \
     -H "Content-Type: application/json" \
     -H "x-api-key: change-me-orders-api-key" \
     -H "Authorization: Bearer <jwt>" \
@@ -305,7 +306,7 @@ Este proyecto se organiza como un monorepo con los siguientes módulos:
 - **Actualizar configuración**  
   `PUT /orders/settings`
   ```bash
-  curl -X PUT "http://localhost:8083/api/v1/orders/settings" \
+  curl -X PUT "{{baseOrdersUrl}}/orders/settings" \
     -H "Content-Type: application/json" \
     -d '{
       "cardRejectionProbability": 0.1,
