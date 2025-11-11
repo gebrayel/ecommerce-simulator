@@ -100,7 +100,7 @@ El workflow `.github/workflows/deploy.yml` ya automatiza:
 | Secret | `CATALOG_SERVICE_BASE_URL`              | URL pública de `catalog-service` (usado por `orders-service`).              |
 | Secret | `USERS_SERVICE_BASE_URL`                | URL pública de `users-service` (usado por `orders-service`).                |
 | Secret | `USERS_SERVICE_JWT_SECRET` etc.         | Configurados directamente en Secret Manager (se referencian en Cloud Run).  |
-| Var    | `ARTIFACT_REPOSITORY` (opcional)        | Nombre del repositorio de Artifact Registry (default `ecommerce-services`). |
+| Var    | `ARTIFACT_REPOSITORY` (opcional)        | Nombre del repositorio de Artifact Registry (default `spring-repo`). |
 
 Si cambias la convención de nombres de imágenes o repositorios, actualiza tanto los Dockerfiles como el workflow y las variables.
 
