@@ -2,6 +2,7 @@ package com.tuempresa.ecommerce.users.infrastructure.web.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 public class UserRequest {
     
@@ -13,6 +14,7 @@ public class UserRequest {
     private String email;
 
     @NotBlank(message = "El teléfono es obligatorio")
+    @Pattern(regexp = "^\\+?[0-9]{7,15}$", message = "El teléfono debe contener entre 7 y 15 dígitos y puede iniciar con +")
     private String telefono;
 
     @NotBlank(message = "La dirección es obligatoria")
