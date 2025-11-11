@@ -13,11 +13,11 @@ spec:
         run.googleapis.com/cpu-throttling: "true"
         run.googleapis.com/execution-environment: gen2
     spec:
-      serviceAccountName: SERVICE_ACCOUNT_EMAIL_PLACEHOLDER
+      serviceAccountName: "${SERVICE_ACCOUNT_EMAIL}"
       containerConcurrency: 80
       timeoutSeconds: 300
       containers:
-        - image: REGION_PLACEHOLDER-docker.pkg.dev/PROJECT_ID_PLACEHOLDER/REPOSITORY_PLACEHOLDER/catalog-service:IMAGE_TAG_PLACEHOLDER
+        - image: "${IMAGE_URI}"
           env:
             - name: SERVER_PORT
               value: "8080"

@@ -9,30 +9,31 @@ Este directorio contiene los `Dockerfile` y manifiestos `yaml` necesarios para e
 
 ## Variables y secretos esperados
 
-| Componente                        | Variable de entorno                          | Fuente recomendada                        |
-|----------------------------------|----------------------------------------------|-------------------------------------------|
-| Todos los servicios              | `SERVER_PORT=8080`                           | Incluida en los manifiestos               |
-| Users Service                    | `SECURITY_JWT_SECRET`                        | Secret Manager `users-service-jwt-secret` |
-| Orders Service                   | `SECURITY_JWT_SECRET`                        | Secret Manager `orders-service-jwt-secret`|
-| Orders Service                   | `SECURITY_CARD_TOKEN_SECRET`                 | Secret Manager `orders-service-card-token-secret` |
-| Orders Service                   | `SECURITY_API_KEY`                           | Secret Manager `orders-service-api-key`   |
-| Orders Service                   | `CLIENTS_CATALOG_BASE_URL`, `CLIENTS_USERS_BASE_URL` | Variables planas (URL de los otros servicios) |
+| Componente          | Variable de entorno                                  | Fuente recomendada                                |
+| ------------------- | ---------------------------------------------------- | ------------------------------------------------- |
+| Todos los servicios | `SERVER_PORT=8080`                                   | Incluida en los manifiestos                       |
+| Users Service       | `SECURITY_JWT_SECRET`                                | Secret Manager `users-service-jwt-secret`         |
+| Orders Service      | `SECURITY_JWT_SECRET`                                | Secret Manager `orders-service-jwt-secret`        |
+| Orders Service      | `SECURITY_CARD_TOKEN_SECRET`                         | Secret Manager `orders-service-card-token-secret` |
+| Orders Service      | `SECURITY_API_KEY`                                   | Secret Manager `orders-service-api-key`           |
+| Orders Service      | `CLIENTS_CATALOG_BASE_URL`, `CLIENTS_USERS_BASE_URL` | Variables planas (URL de los otros servicios)     |
 
 > Ajusta los nombres de secreto si prefieres otra convención. En el manifiesto puedes crear más entradas `env` si necesitas exponer nueva configuración.
 
-### Placeholders en los manifiestos
+### Variables que espera `envsubst`
 
-- `PROJECT_ID_PLACEHOLDER`: reemplázalo por el ID real del proyecto GCP (`${GCP_PROJECT_ID}` en GitHub Actions).
-- `REGION_PLACEHOLDER`: corresponde a la región del repositorio de Artifact Registry (`${GCP_REGION}` si usas una sola región).
-- `REPOSITORY_PLACEHOLDER`: nombre del repositorio de Artifact Registry (ej. `ecommerce-services`).
-- `IMAGE_TAG_PLACEHOLDER`: etiqueta de la imagen, normalmente `${GITHUB_SHA}` o `latest`.
-- `SERVICE_ACCOUNT_EMAIL_PLACEHOLDER`: correo del servicio que despliega (`${SERVICE_ACCOUNT_EMAIL}`).
-- `catalog-service-url-placeholder` y `users-service-url-placeholder`: URL públicas (o internas) de los otros servicios en Cloud Run.
+Cada manifest usa variables de entorno explícitas para facilitar la sustitución:
 
-Puedes automatizar el reemplazo con `envsubst` dentro del workflow:
+- `IMAGE_URI`: URI completo de la imagen en Artifact Registry (se calcula en el workflow).
+- `SERVICE_ACCOUNT_EMAIL`: cuenta que Cloud Run usará en ejecución.
+- `CATALOG_SERVICE_BASE_URL`, `USERS_SERVICE_BASE_URL`: solo necesarias para `orders-service`. Son las URL base (por ejemplo, `https://catalog-service-xyz.run.app/api/v1`).
+
+Ejemplo manual:
 
 ```shell
-envsubst < deploy/cloud-run/users-service.yaml > ${RUNNER_TEMP}/users-service.yaml
+export IMAGE_URI="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REPOSITORY}/users-service:${IMAGE_TAG}"
+export SERVICE_ACCOUNT_EMAIL="${SERVICE_ACCOUNT_EMAIL}"
+envsubst < deploy/cloud-run/users-service.yaml > /tmp/users-service.yaml
 ```
 
 ## Build y push de imágenes a Artifact Registry
@@ -82,11 +83,28 @@ gcloud run services replace ${RUNNER_TEMP}/users-service.yaml \
 
 Este comando aplica todas las configuraciones del manifiesto y resulta idempotente (útil para pipelines).
 
-## Pasos extra para GitHub Actions
+## Pipeline listo en GitHub Actions
 
-1. Usa la acción oficial `google-github-actions/auth` con tus secretos `WIF_PROVIDER` y `SERVICE_ACCOUNT_EMAIL`.
-2. Ejecuta `gcloud run deploy`/`services replace` por cada microservicio, usando los YAML generados con `envsubst`.
-3. Añade un paso previo para crear/actualizar los secretos en Secret Manager si automatizas esa parte (API `secretsmanager.googleapis.com`).
+El workflow `.github/workflows/deploy.yml` ya automatiza:
+
+1. Autenticación con WIF (`google-github-actions/auth@v2`).
+2. Build y push de las imágenes (usa Docker y `gcloud auth configure-docker`).
+3. Renderizado de manifiestos con `envsubst` y despliegue idempotente vía `gcloud run services replace`.
+
+### Variables y secretos necesarios en GitHub
+
+| Tipo   | Nombre                                  | Uso                                                                         |
+| ------ | --------------------------------------- | --------------------------------------------------------------------------- |
+| Secret | `GCP_PROJECT_ID`, `GCP_REGION`          | Datos del proyecto y región.                                                |
+| Secret | `SERVICE_ACCOUNT_EMAIL`, `WIF_PROVIDER` | Autenticación WIF.                                                          |
+| Secret | `CATALOG_SERVICE_BASE_URL`              | URL pública de `catalog-service` (usado por `orders-service`).              |
+| Secret | `USERS_SERVICE_BASE_URL`                | URL pública de `users-service` (usado por `orders-service`).                |
+| Secret | `USERS_SERVICE_JWT_SECRET` etc.         | Configurados directamente en Secret Manager (se referencian en Cloud Run).  |
+| Var    | `ARTIFACT_REPOSITORY` (opcional)        | Nombre del repositorio de Artifact Registry (default `ecommerce-services`). |
+
+Si cambias la convención de nombres de imágenes o repositorios, actualiza tanto los Dockerfiles como el workflow y las variables.
+
+> Para obtener las URL públicas tras el primer despliegue, ejecuta `gcloud run services describe <service> --region "${GCP_REGION}" --format 'value(status.url)'` y actualiza los secretos correspondientes.
 
 ## Verificación
 
@@ -94,4 +112,3 @@ Este comando aplica todas las configuraciones del manifiesto y resulta idempoten
 - Logs en Cloud Logging (`gcloud logging read` o consola web).
 
 Con esto tus microservicios pueden publicarse en Cloud Run reutilizando las credenciales de WIF ya disponibles en tu repositorio.
-
