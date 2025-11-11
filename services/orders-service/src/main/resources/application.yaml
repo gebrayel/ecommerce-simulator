@@ -1,0 +1,42 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: orders-service
+  main:
+    allow-bean-definition-overriding: true
+  mvc:
+    servlet:
+      path: /api/v1
+  datasource:
+    url: jdbc:h2:mem:ordersdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+clients:
+  catalog:
+    base-url: http://localhost:8081/api/v1
+  users:
+    base-url: http://localhost:8082/api/v1
+
+security:
+  jwt:
+    secret: change-me-jwt-secret-please-change
+    issuer: ecommerce-simulator
+  card-token:
+    secret: change-me-card-token-secret
+  api-key: change-me-orders-api-key
