@@ -1,0 +1,40 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: users-service
+  annotations:
+    run.googleapis.com/ingress: all
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "0"
+        autoscaling.knative.dev/maxScale: "3"
+        run.googleapis.com/cpu-throttling: "true"
+        run.googleapis.com/execution-environment: gen2
+    spec:
+      serviceAccountName: SERVICE_ACCOUNT_EMAIL_PLACEHOLDER
+      containerConcurrency: 80
+      timeoutSeconds: 300
+      containers:
+        - image: REGION_PLACEHOLDER-docker.pkg.dev/PROJECT_ID_PLACEHOLDER/REPOSITORY_PLACEHOLDER/users-service:IMAGE_TAG_PLACEHOLDER
+          env:
+            - name: SERVER_PORT
+              value: "8080"
+            - name: SECURITY_JWT_SECRET
+              valueSource:
+                secretKeyRef:
+                  name: users-service-jwt-secret
+                  key: latest
+            - name: SECURITY_JWT_ISSUER
+              value: ecommerce-simulator
+            - name: SECURITY_JWT_EXPIRATION_MINUTES
+              value: "120"
+          resources:
+            limits:
+              cpu: "1"
+              memory: "512Mi"
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+
