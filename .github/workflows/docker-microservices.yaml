@@ -41,7 +41,7 @@ jobs:
 
       - name: Build & Deploy Catalog Service
         run: |
-          gcloud builds submit ./services/catalog-service --no-source \
+          gcloud builds submit --no-source \
             --tag us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/catalog-service:${{ github.sha }}
 
           gcloud run deploy catalog-service \
@@ -50,7 +50,7 @@ jobs:
 
       - name: Build & Deploy Users Service
         run: |
-          gcloud builds submit ./services/users-service --no-source \
+          gcloud builds submit --no-source \
             --tag us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/users-service:${{ github.sha }}
 
           gcloud run deploy users-service \
@@ -59,7 +59,7 @@ jobs:
 
       - name: Build & Deploy Orders Service
         run: |
-          gcloud builds submit ./services/orders-service --no-source\
+          gcloud builds submit --no-source\
             --tag us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/orders-service:${{ github.sha }}
 
           gcloud run deploy orders-service \
