@@ -11,6 +11,8 @@ Este proyecto se organiza como un monorepo con los siguientes módulos:
 - `services/users-service/`: Servicio de gestión de usuarios y autenticación.
 - `services/orders-service/`: Servicio de carritos, pedidos, pagos y configuración de órdenes.
 
+> 📚 **Recursos**: [Guía de Monorepo con SpringBoot](https://chatgpt.com/share/69172111-cc3c-800f-adc7-1ba54bb5026a)
+
 ## Puertos y rutas base
 
 | Servicio        | Puerto | Base URL                       |
@@ -499,9 +501,11 @@ docker compose up --build
 ### Stack Principal
 
 - **Spring Boot 3.5.7**: Framework principal para el desarrollo de microservicios
+  - [Working with SpringBoot](https://chatgpt.com/share/6917208d-ffc0-800f-8a47-f576a731eb32)
 - **Java 17**: Lenguaje de programación
 - **Gradle (Kotlin DSL)**: Herramienta de construcción y gestión de dependencias
 - **H2 Database**: Base de datos en memoria para desarrollo y pruebas
+  - [Guía de uso de H2 como BD](https://chatgpt.com/share/6917212c-7fcc-800f-a2b5-4cd5114e9785)
 - **Spring Data JPA**: Abstracción para acceso a datos
 - **Spring Security**: Framework de seguridad (usado para hashing de contraseñas)
 - **JWT (JSON Web Tokens)**: Autenticación y autorización mediante tokens
@@ -521,6 +525,8 @@ docker compose up --build
 
 - **Docker**: Contenedorización de servicios
 - **Docker Compose**: Orquestación de múltiples contenedores
+- **Google Cloud Build & Cloud Run**: Despliegue en la nube
+  - [Guía de despliegue con Cloud Build y Cloud Run](https://chatgpt.com/share/6917204b-8188-800f-9214-633665f761cd)
 
 ## Arquitectura
 
@@ -606,6 +612,8 @@ Database
 ## Testing
 
 El proyecto implementa un enfoque completo de testing con pruebas unitarias y análisis de cobertura de código.
+
+> 📚 **Recursos**: [Guía de Testing Unitario](https://chatgpt.com/share/69171fb4-d420-800f-80ae-93262acba3dc)
 
 ### Estrategia de Testing
 
