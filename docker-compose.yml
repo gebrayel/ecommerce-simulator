@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  catalog:
+    build: ./services/catalog-service
+    container_name: catalog-ms
+    ports:
+      - '8081:8081'
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+
+  orders:
+    build: ./services/orders-service
+    container_name: orders-ms
+    ports:
+      - '8083:8083'
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+
+  users:
+    build: ./services/users-service
+    container_name: users-ms
+    ports:
+      - '8082:8082'
+    environment:
+      SPRING_PROFILES_ACTIVE: local
