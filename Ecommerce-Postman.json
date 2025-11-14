@@ -1,0 +1,712 @@
+{
+	"info": {
+		"_postman_id": "3b9ef370-29dd-4e29-b095-03240eac0f52",
+		"name": "API Documentation #reference",
+		"description": "# ecommerce-simulator\n\nMonorepo de servicios de ecommerce construido con Spring Boot.\n\n## Estructura del Proyecto\n\nEste proyecto se organiza como un monorepo con los siguientes módulos:\n\n- `libs/`: Librerías compartidas (DTOs, utilidades, etc.).\n    \n- `services/catalog-service/`: Servicio de catálogo de productos.\n    \n- `services/users-service/`: Servicio de gestión de usuarios y autenticación.\n    \n- `services/orders-service/`: Servicio de carritos, pedidos, pagos y configuración de órdenes.\n    \n\n## Puertos y rutas base\n\n| Servicio | Puerto | Base URL |\n| --- | --- | --- |\n| Catalog Service | 8081 | `http://localhost:8081/api/v1` |\n| Users Service | 8082 | `http://localhost:8082/api/v1` |\n| Orders Service | 8083 | `http://localhost:8083/api/v1` |\n\n> Todos los servicios exponen `GET /ping` en su respectiva base URL para verificaciones de salud. \n  \n\n## Ejecutar los Servicios\n\n``` bash\n# Desde la raíz del proyecto\n./gradlew :services:catalog-service:bootRun\n./gradlew :services:users-service:bootRun\n./gradlew :services:orders-service:bootRun\n\n ```\n\n``` bash\n# Desde cada servicio\ncd services/catalog-service && ../../gradlew bootRun\ncd services/users-service && ../../gradlew bootRun\ncd services/orders-service && ../../gradlew bootRun\n\n ```\n\n## Tecnologías\n\n- Spring Boot 3.5.7\n    \n- Java 17\n    \n- Gradle (Kotlin DSL)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16900437",
+		"_collection_link": "https://www.postman.com/supply-cosmonaut-98303072/workspace/ecommerce-springboot/collection/16900437-3b9ef370-29dd-4e29-b095-03240eac0f52?action=share&source=collection_link&creator=16900437"
+	},
+	"item": [
+		{
+			"name": "Microservices",
+			"item": [
+				{
+					"name": "Users",
+					"item": [
+						{
+							"name": "Health",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n      \"name\": \"Ana Pérez\",\n      \"email\": \"ana@example.com\",\n      \"telefono\": \"+34123456789\",\n      \"direccion\": \"Calle Mayor 123, Madrid\",\n      \"password\": \"supersegura\"\n    }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUsersUrl}}/ping",
+									"host": [
+										"{{baseUsersUrl}}"
+									],
+									"path": [
+										"ping"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Users",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUsersUrl}}/users",
+									"host": [
+										"{{baseUsersUrl}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get User by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUsersUrl}}/users/1",
+									"host": [
+										"{{baseUsersUrl}}"
+									],
+									"path": [
+										"users",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Register User",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n      \"name\": \"Ana Pérez\",\n      \"email\": \"ana@example.com\",\n      \"telefono\": \"+34123456789\",\n      \"direccion\": \"Calle Mayor 123, Madrid\",\n      \"password\": \"supersegura\"\n    }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUsersUrl}}/users",
+									"host": [
+										"{{baseUsersUrl}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Login",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"ana@example.com\",\n    \"password\": \"supersegura\"\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUsersUrl}}/auth/login",
+									"host": [
+										"{{baseUsersUrl}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update User by ID",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n      \"name\": \"Ana Pérez\",\n      \"email\": \"ana@example+1.com\",\n      \"telefono\": \"+34123456789\",\n      \"direccion\": \"Calle Mayor 123, Madrid\",\n      \"password\": \"supersegura\"\n    }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUsersUrl}}/users/1",
+									"host": [
+										"{{baseUsersUrl}}"
+									],
+									"path": [
+										"users",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "### Users Service (`http://localhost:8082/api/v1`)\n\n#### Autenticación\n\n- **Login**  \n  `POST /auth/login`\n  ```bash\n  curl -X POST \"http://localhost:8082/api/v1/auth/login\" \\\n    -H \"Content-Type: application/json\" \\\n    -d '{\n      \"email\": \"ana@example.com\",\n      \"password\": \"supersegura\"\n    }'\n  ```\n  ```json\n  {\n    \"userId\": 5,\n    \"email\": \"ana@example.com\",\n    \"token\": \"jwt-generado\"\n  }\n  ```\n\n#### Usuarios\n\n- **Listar usuarios**  \n    `GET /users`\n    \n- **Obtener usuario por id**  \n    `GET /users/{id}`\n    \n- **Crear usuario**  \n    `POST /users`\n    \n    ``` bash\n    curl -X POST \"http://localhost:8082/api/v1/users\" \\\n      -H \"Content-Type: application/json\" \\\n      -d '{\n        \"name\": \"Ana Pérez\",\n        \"email\": \"ana@example.com\",\n        \"telefono\": \"+34123456789\",\n        \"direccion\": \"Calle Mayor 123, Madrid\",\n        \"password\": \"supersegura\"\n      }'\n    \n     ```\n    \n- **Actualizar usuario**  \n    `PUT /users/{id}` con el mismo cuerpo que la creación.\n    \n- **Eliminar usuario**  \n    `DELETE /users/{id}` devuelve `204 No Content`."
+				},
+				{
+					"name": "Orders",
+					"item": [
+						{
+							"name": "Health",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseOrdersUrl}}/ping",
+									"host": [
+										"{{baseOrdersUrl}}"
+									],
+									"path": [
+										"ping"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Cart by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseOrdersUrl}}/carts/1",
+									"host": [
+										"{{baseOrdersUrl}}"
+									],
+									"path": [
+										"carts",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Shopping Cart",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \"userId\": 1 }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseOrdersUrl}}/carts",
+									"host": [
+										"{{baseOrdersUrl}}"
+									],
+									"path": [
+										"carts"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Producto to cart",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \"productId\": 1, \"quantity\": 2 }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseOrdersUrl}}/carts/1/items",
+									"host": [
+										"{{baseOrdersUrl}}"
+									],
+									"path": [
+										"carts",
+										"1",
+										"items"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Order from Cart",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n      \"cartId\": 1,\n      \"deliveryAddress\": \"Calle Mayor 123, Madrid\"\n    }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseOrdersUrl}}/orders",
+									"host": [
+										"{{baseOrdersUrl}}"
+									],
+									"path": [
+										"orders"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Card to User",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "x-api-key",
+										"value": "change-me-orders-api-key"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{vault:json-web-token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n      \"cardNumber\": \"4242424242424242\",\n      \"cvv\": \"123\",\n      \"expiryMonth\": 12,\n      \"expiryYear\": 2030\n    }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseOrdersUrl}}/cards",
+									"host": [
+										"{{baseOrdersUrl}}"
+									],
+									"path": [
+										"cards"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Orders Settings",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseOrdersUrl}}/orders/settings",
+									"host": [
+										"{{baseOrdersUrl}}"
+									],
+									"path": [
+										"orders",
+										"settings"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Orders Settings",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n      \"cardRejectionProbability\": 0.1,\n      \"paymentRetryAttempts\": 5\n    }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseOrdersUrl}}/orders/settings",
+									"host": [
+										"{{baseOrdersUrl}}"
+									],
+									"path": [
+										"orders",
+										"settings"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "New Request",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "x-api-key",
+										"value": "change-me-orders-api-key"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{vault:json-web-token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n      \"orderId\": 1,\n      \"amount\": 39.98,\n      \"method\": \"CARD\",\n      \"cardToken\": \"1.59f41610-16a6-4238-bac4-c38eee5cc10e.aFMK9YwSAMJlv8uPnMUy9IBniMmLMxjAsMg56uq81K0\"\n    }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseOrdersUrl}}/payments",
+									"host": [
+										"{{baseOrdersUrl}}"
+									],
+									"path": [
+										"payments"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "### Orders Service (`http://localhost:8083/api/v1`)\n\n> Las operaciones de tarjetas (`/cards`) y pagos (`/payments`) requieren:\n>\n> - Cabecera `x-api-key` con la API key configurada en `security.api-key`.\n> - Cabecera `Authorization: Bearer <jwt>` con un token válido cuyo `userId` se pueda resolver.\n\n#### Carritos\n\n- **Crear carrito**  \n  `POST /carts`\n\n  ```bash\n  curl -X POST \"http://localhost:8083/api/v1/carts\" \\\n    -H \"Content-Type: application/json\" \\\n    -d '{ \"userId\": 5 }'\n  ```\n\n- **Agregar producto**  \n  `POST /carts/{cartId}/items`\n\n  ```bash\n  curl -X POST \"http://localhost:8083/api/v1/carts/10/items\" \\\n    -H \"Content-Type: application/json\" \\\n    -d '{ \"productId\": 1, \"quantity\": 2 }'\n  ```\n\n- **Eliminar producto específico**  \n  `DELETE /carts/{cartId}/items/{productId}`\n\n- **Vaciar carrito**  \n  `DELETE /carts/{cartId}/items`\n\n- **Obtener carrito**  \n  `GET /carts/{cartId}`\n  ```json\n  {\n    \"id\": 10,\n    \"userId\": 5,\n    \"items\": [\n      {\n        \"productId\": 1,\n        \"productName\": \"Camisa básica blanca\",\n        \"quantity\": 2,\n        \"unitPrice\": 19.99,\n        \"subtotal\": 39.98\n      }\n    ],\n    \"total\": 39.98,\n    \"createdAt\": \"2025-01-12T09:00:00\",\n    \"updatedAt\": \"2025-01-12T09:05:00\"\n  }\n  ```\n\n#### Órdenes\n\n- **Crear orden desde carrito**  \n  `POST /orders`\n\n  ```bash\n  curl -X POST \"http://localhost:8083/api/v1/orders\" \\\n    -H \"Content-Type: application/json\" \\\n    -d '{\n      \"cartId\": 10,\n      \"deliveryAddress\": \"Calle Mayor 123, Madrid\"\n    }'\n  ```\n\n- **Marcar orden como pagada**  \n  `POST /orders/{orderId}/pay`\n\n- **Cancelar orden**  \n  `POST /orders/{orderId}/cancel`\n\n- **Obtener orden**  \n  `GET /orders/{orderId}`\n\n#### Pagos\n\n- **Registrar pago**  \n  `POST /payments` con cabeceras de seguridad.\n\n  ```bash\n  curl -X POST \"http://localhost:8083/api/v1/payments\" \\\n    -H \"Content-Type: application/json\" \\\n    -H \"x-api-key: change-me-orders-api-key\" \\\n    -H \"Authorization: Bearer <jwt>\" \\\n    -d '{\n      \"orderId\": 42,\n      \"amount\": 39.98,\n      \"method\": \"CARD\",\n      \"cardToken\": \"tok_1H2J3K\"\n    }'\n  ```\n\n- **Marcar pago como completado**  \n  `POST /payments/{paymentId}/complete`\n\n- **Marcar pago como fallido**  \n  `POST /payments/{paymentId}/fail`\n\n- **Obtener pago**  \n  `GET /payments/{paymentId}`\n\n#### Tarjetas de crédito\n\n- **Registrar tarjeta**  \n  `POST /cards` con cabeceras de seguridad.\n\n  ```bash\n  curl -X POST \"http://localhost:8083/api/v1/cards\" \\\n    -H \"Content-Type: application/json\" \\\n    -H \"x-api-key: change-me-orders-api-key\" \\\n    -H \"Authorization: Bearer <jwt>\" \\\n    -d '{\n      \"cardNumber\": \"4242424242424242\",\n      \"cvv\": \"123\",\n      \"expiryMonth\": 12,\n      \"expiryYear\": 2030\n    }'\n  ```\n\n- **Listar tarjetas del usuario autenticado**  \n  `GET /cards` con cabeceras de seguridad.\n\n#### Configuración de órdenes\n\n- **Obtener configuración**  \n  `GET /orders/settings`\n\n  ```json\n  {\n    \"cardRejectionProbability\": 0.2,\n    \"paymentRetryAttempts\": 3\n  }\n  ```\n\n- **Actualizar configuración**  \n  `PUT /orders/settings`\n  ```bash\n  curl -X PUT \"http://localhost:8083/api/v1/orders/settings\" \\\n    -H \"Content-Type: application/json\" \\\n    -d '{\n      \"cardRejectionProbability\": 0.1,\n      \"paymentRetryAttempts\": 5\n    }'\n  ```\n"
+				},
+				{
+					"name": "Catalog",
+					"item": [
+						{
+							"name": "Health",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseCatalogUrl}}/ping",
+									"host": [
+										"{{baseCatalogUrl}}"
+									],
+									"path": [
+										"ping"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Products",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseCatalogUrl}}/catalog/products",
+									"host": [
+										"{{baseCatalogUrl}}"
+									],
+									"path": [
+										"catalog",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Filtered Search Products",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseCatalogUrl}}/catalog/products?page=0&size=5&search=laptop",
+									"host": [
+										"{{baseCatalogUrl}}"
+									],
+									"path": [
+										"catalog",
+										"products"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "5"
+										},
+										{
+											"key": "search",
+											"value": "laptop"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Product By Id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseCatalogUrl}}/catalog/products/1",
+									"host": [
+										"{{baseCatalogUrl}}"
+									],
+									"path": [
+										"catalog",
+										"products",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Catalog Settings",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseCatalogUrl}}/catalog/settings",
+									"host": [
+										"{{baseCatalogUrl}}"
+									],
+									"path": [
+										"catalog",
+										"settings"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Product",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n      \"name\": \"Zapatillas running\",\n      \"description\": \"Modelo 2025 con amortiguación\",\n      \"price\": 89.90,\n      \"stock\": 25\n    }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseCatalogUrl}}/catalog/products",
+									"host": [
+										"{{baseCatalogUrl}}"
+									],
+									"path": [
+										"catalog",
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Product",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n      \"name\": \"Zapatillas nike\",\n      \"description\": \"Modelo 2026 con amortiguación\",\n      \"price\": 89.90,\n      \"stock\": 25\n    }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseCatalogUrl}}/catalog/products/6",
+									"host": [
+										"{{baseCatalogUrl}}"
+									],
+									"path": [
+										"catalog",
+										"products",
+										"6"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Catalog Settings",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \"minimumStock\": 10 }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseCatalogUrl}}/catalog/settings",
+									"host": [
+										"{{baseCatalogUrl}}"
+									],
+									"path": [
+										"catalog",
+										"settings"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "### Catalog Service (`http://localhost:8081/api/v1`)\n\n#### Productos\n\n- **Listar productos**  \n  `GET /catalog/products` con parámetros opcionales `page` (default `0`), `size` (default `10`) y `search`.\n\n  ```bash\n  curl \"http://localhost:8081/api/v1/catalog/products?page=0&size=5&search=camisa\"\n  ```\n\n  ```json\n  {\n    \"content\": [\n      {\n        \"id\": 1,\n        \"name\": \"Camisa básica blanca\",\n        \"description\": \"Camisa de algodón\",\n        \"price\": 19.99,\n        \"stock\": 42,\n        \"createdAt\": \"2025-01-10T09:12:00\",\n        \"updatedAt\": \"2025-01-12T14:33:00\"\n      }\n    ],\n    \"page\": 0,\n    \"size\": 5,\n    \"totalElements\": 1,\n    \"totalPages\": 1,\n    \"last\": true\n  }\n  ```\n\n- **Obtener producto por id**  \n  `GET /catalog/products/{id}`\n\n  ```bash\n  curl \"http://localhost:8081/api/v1/catalog/products/1\"\n  ```\n\n- **Crear producto**  \n  `POST /catalog/products`\n\n  ```bash\n  curl -X POST \"http://localhost:8081/api/v1/catalog/products\" \\\n    -H \"Content-Type: application/json\" \\\n    -d '{\n      \"name\": \"Zapatillas running\",\n      \"description\": \"Modelo 2025 con amortiguación\",\n      \"price\": 89.90,\n      \"stock\": 25\n    }'\n  ```\n\n  ```json\n  {\n    \"id\": 12,\n    \"name\": \"Zapatillas running\",\n    \"description\": \"Modelo 2025 con amortiguación\",\n    \"price\": 89.9,\n    \"stock\": 25,\n    \"createdAt\": \"2025-01-12T11:45:30\",\n    \"updatedAt\": \"2025-01-12T11:45:30\"\n  }\n  ```\n\n- **Actualizar producto**  \n  `PUT /catalog/products/{id}` con el mismo cuerpo que la creación.\n\n- **Eliminar producto**  \n  `DELETE /catalog/products/{id}` devuelve `204 No Content`.\n\n#### Configuración del catálogo\n\n- **Obtener configuración**  \n  `GET /catalog/settings`\n\n  ```json\n  {\n    \"id\": 1,\n    \"minimumStock\": 3\n  }\n  ```\n\n- **Actualizar configuración**  \n  `PUT /catalog/settings`\n  ```bash\n  curl -X PUT \"http://localhost:8081/api/v1/catalog/settings\" \\\n    -H \"Content-Type: application/json\" \\\n    -d '{ \"minimumStock\": 10 }'\n  ```\n"
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "key",
+				"value": "X-API-Key",
+				"type": "string"
+			},
+			{
+				"key": "value",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://farming-simulator.pstmn.io"
+		}
+	]
+}

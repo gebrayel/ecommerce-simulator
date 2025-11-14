@@ -330,8 +330,383 @@ cd services/users-service && ../../gradlew bootRun
 cd services/orders-service && ../../gradlew bootRun
 ```
 
+## Ejecutar con Docker y Docker Compose
+
+### Prerrequisitos
+
+- **Docker**: Versión 20.10 o superior
+- **Docker Compose**: Versión 1.29 o superior (o Docker Compose V2)
+
+Verifica que Docker esté instalado y funcionando:
+
+```bash
+docker --version
+docker compose version
+```
+
+### Construcción de los Servicios
+
+Antes de ejecutar con Docker Compose, es necesario construir los JARs de cada servicio:
+
+```bash
+# Construir todos los servicios
+./gradlew build
+
+# O construir cada servicio individualmente
+./gradlew :services:catalog-service:build
+./gradlew :services:users-service:build
+./gradlew :services:orders-service:build
+```
+
+> **Nota**: Los Dockerfiles esperan que los JARs estén en `build/libs/` de cada servicio. Asegúrate de ejecutar `build` antes de construir las imágenes Docker.
+
+### Ejecutar con Docker Compose
+
+Desde la raíz del proyecto, ejecuta:
+
+```bash
+# Construir y levantar todos los servicios
+docker compose up --build
+
+# Ejecutar en segundo plano (detached mode)
+docker compose up --build -d
+
+# Ver logs de todos los servicios
+docker compose logs -f
+
+# Ver logs de un servicio específico
+docker compose logs -f catalog
+docker compose logs -f users
+docker compose logs -f orders
+```
+
+### Comandos Útiles de Docker Compose
+
+```bash
+# Detener todos los servicios
+docker compose down
+
+# Detener y eliminar volúmenes
+docker compose down -v
+
+# Reconstruir un servicio específico
+docker compose up --build catalog
+
+# Ver el estado de los servicios
+docker compose ps
+
+# Ejecutar un comando en un contenedor
+docker compose exec catalog sh
+docker compose exec users sh
+docker compose exec orders sh
+```
+
+### Construir Imágenes Docker Individualmente
+
+Si prefieres construir y ejecutar cada servicio por separado:
+
+```bash
+# Catalog Service
+cd services/catalog-service
+docker build -t catalog-service:latest .
+docker run -p 8081:8081 -e SPRING_PROFILES_ACTIVE=local catalog-service:latest
+
+# Users Service
+cd services/users-service
+docker build -t users-service:latest .
+docker run -p 8082:8082 -e SPRING_PROFILES_ACTIVE=local users-service:latest
+
+# Orders Service
+cd services/orders-service
+docker build -t orders-service:latest .
+docker run -p 8083:8083 -e SPRING_PROFILES_ACTIVE=local orders-service:latest
+```
+
+### Verificar que los Servicios Están Funcionando
+
+Una vez que los contenedores estén en ejecución, verifica que los servicios respondan:
+
+```bash
+# Health check de cada servicio
+curl http://localhost:8081/api/v1/ping
+curl http://localhost:8082/api/v1/ping
+curl http://localhost:8083/api/v1/ping
+```
+
+Deberías recibir `pong` como respuesta de cada servicio.
+
+### Configuración de Docker Compose
+
+El archivo `docker-compose.yml` configura tres servicios:
+
+- **catalog**: Puerto 8081, contenedor `catalog-ms`
+- **users**: Puerto 8082, contenedor `users-ms`
+- **orders**: Puerto 8083, contenedor `orders-ms`
+
+Cada servicio:
+- Se construye desde su respectivo directorio (`./services/[service-name]`)
+- Expone su puerto correspondiente
+- Usa el perfil Spring `local` por defecto
+- Utiliza H2 Database en memoria (configurado en `application.yaml`)
+
+### Troubleshooting
+
+#### Los servicios no responden después de iniciar
+
+1. Verifica que los puertos no estén en uso:
+   ```bash
+   lsof -i :8081
+   lsof -i :8082
+   lsof -i :8083
+   ```
+
+2. Revisa los logs del contenedor:
+   ```bash
+   docker compose logs catalog
+   docker compose logs users
+   docker compose logs orders
+   ```
+
+3. Verifica que los JARs se hayan construido correctamente:
+   ```bash
+   ls -la services/catalog-service/build/libs/
+   ls -la services/users-service/build/libs/
+   ls -la services/orders-service/build/libs/
+   ```
+
+#### Error: "Cannot connect to Docker daemon"
+
+Asegúrate de que Docker Desktop (o Docker daemon) esté ejecutándose.
+
+#### Limpiar y Reconstruir Todo
+
+Si necesitas empezar desde cero:
+
+```bash
+# Detener y eliminar contenedores, redes y volúmenes
+docker compose down -v
+
+# Limpiar builds de Gradle
+./gradlew clean
+
+# Reconstruir todo
+./gradlew build
+docker compose up --build
+```
+
 ## Tecnologías
 
-- Spring Boot 3.5.7
-- Java 17
-- Gradle (Kotlin DSL)
+### Stack Principal
+
+- **Spring Boot 3.5.7**: Framework principal para el desarrollo de microservicios
+- **Java 17**: Lenguaje de programación
+- **Gradle (Kotlin DSL)**: Herramienta de construcción y gestión de dependencias
+- **H2 Database**: Base de datos en memoria para desarrollo y pruebas
+- **Spring Data JPA**: Abstracción para acceso a datos
+- **Spring Security**: Framework de seguridad (usado para hashing de contraseñas)
+- **JWT (JSON Web Tokens)**: Autenticación y autorización mediante tokens
+  - `jjwt-api:0.11.5`
+  - `jjwt-impl:0.11.5`
+  - `jjwt-jackson:0.11.5`
+
+### Testing
+
+- **JUnit 5**: Framework de testing unitario
+- **Mockito**: Framework de mocking para tests aislados
+- **AssertJ**: Librería de aserciones fluida y legible
+- **JaCoCo**: Herramienta de análisis de cobertura de código
+- **Spring Boot Test**: Utilidades de testing de Spring Boot
+
+### Contenedores y Despliegue
+
+- **Docker**: Contenedorización de servicios
+- **Docker Compose**: Orquestación de múltiples contenedores
+
+## Arquitectura
+
+Este proyecto implementa **Arquitectura Hexagonal (Ports and Adapters)**, también conocida como Clean Architecture, que separa la lógica de negocio de los detalles técnicos de implementación.
+
+### Estructura de Capas
+
+Cada microservicio sigue la siguiente estructura:
+
+```
+service-name/
+├── domain/                          # Capa de Dominio (Núcleo)
+│   ├── model/                       # Modelos de dominio puros (sin dependencias externas)
+│   ├── port/
+│   │   ├── in/                      # Puertos de entrada (casos de uso/interfaces)
+│   │   └── out/                     # Puertos de salida (repositorios/interfaces)
+│   └── exception/                  # Excepciones de dominio
+│
+├── application/                     # Capa de Aplicación
+│   └── service/                     # Implementación de casos de uso
+│
+└── infrastructure/                  # Capa de Infraestructura
+    ├── persistence/                 # Adaptadores de persistencia
+    │   ├── entity/                  # Entidades JPA
+    │   ├── repository/              # Repositorios JPA
+    │   ├── mapper/                   # Mappers dominio ↔ entidad
+    │   └── adapter/                  # Adaptadores que implementan puertos de salida
+    │
+    └── web/                         # Adaptadores de entrada (REST)
+        ├── controller/              # Controladores REST
+        ├── dto/                     # DTOs de entrada/salida
+        ├── mapper/                  # Mappers DTO ↔ dominio
+        └── filter/                  # Filtros HTTP (logging, seguridad, etc.)
+```
+
+### Principios Aplicados
+
+1. **Separación de Responsabilidades**
+   - **Dominio**: Contiene la lógica de negocio pura, sin dependencias de frameworks
+   - **Aplicación**: Orquesta los casos de uso y coordina entre puertos
+   - **Infraestructura**: Implementa los detalles técnicos (JPA, REST, etc.)
+
+2. **Inversión de Dependencias**
+   - El dominio define interfaces (puertos)
+   - La infraestructura implementa esas interfaces (adaptadores)
+   - La aplicación depende de interfaces, no de implementaciones concretas
+
+3. **Independencia del Framework**
+   - Los modelos de dominio no tienen anotaciones JPA
+   - La lógica de negocio no depende directamente de Spring
+   - Facilita el cambio de frameworks sin afectar el dominio
+
+4. **Testabilidad**
+   - Fácil crear mocks de los puertos
+   - El dominio se puede probar sin infraestructura
+   - Tests unitarios aislados de frameworks
+
+### Flujo de Datos
+
+```
+HTTP Request
+    ↓
+Controller (Infrastructure/Web)
+    ↓
+DTO → WebMapper → Domain Model
+    ↓
+UseCase Interface (Domain/Port) → Service Implementation (Application)
+    ↓
+Repository Port (Domain/Port) → Repository Adapter (Infrastructure)
+    ↓
+JPA Repository → Entity (JPA)
+    ↓
+Database
+```
+
+### Ventajas de esta Arquitectura
+
+- **Mantenibilidad**: Código organizado y fácil de entender
+- **Escalabilidad**: Fácil agregar nuevos adaptadores (nuevas APIs, bases de datos, etc.)
+- **Testabilidad**: Cada capa se puede probar independientemente
+- **Flexibilidad**: Cambiar implementaciones sin afectar el dominio
+
+## Testing
+
+El proyecto implementa un enfoque completo de testing con pruebas unitarias y análisis de cobertura de código.
+
+### Estrategia de Testing
+
+#### 1. **Pruebas Unitarias**
+
+Cada servicio incluye pruebas unitarias para:
+
+- **Servicios de Aplicación**: Lógica de negocio con mocks de repositorios
+- **Controladores**: Validación de endpoints y manejo de DTOs
+- **Servicios de Seguridad**: Hashing de contraseñas, generación y validación de JWT
+- **Mappers**: Conversión entre modelos de dominio, entidades y DTOs
+
+#### 2. **Frameworks y Herramientas**
+
+- **JUnit 5**: Framework principal de testing
+- **Mockito**: Para crear mocks de dependencias
+  - `@ExtendWith(MockitoExtension.class)` para integración con JUnit 5
+  - `@Mock` para dependencias mockeadas
+  - `@InjectMocks` para inyectar mocks en el objeto bajo prueba
+- **AssertJ**: Para aserciones más legibles y expresivas
+- **Spring Boot Test**: Para tests de integración cuando sea necesario
+
+#### 3. **Cobertura de Código con JaCoCo**
+
+Cada servicio está configurado con **JaCoCo** para medir la cobertura de código:
+
+- **Configuración**: Plugin JaCoCo en `build.gradle.kts`
+- **Reportes**: Generación automática de reportes HTML y XML después de ejecutar tests
+- **Ubicación de reportes**: `build/reports/jacoco/test/html/index.html`
+
+#### 4. **Ejecución de Tests**
+
+```bash
+# Ejecutar tests y generar reporte de cobertura
+cd services/[service-name]
+../../gradlew test jacocoTestReport
+
+# Ver reporte HTML (macOS)
+open build/reports/jacoco/test/html/index.html
+
+# Ver reporte HTML (Linux)
+xdg-open build/reports/jacoco/test/html/index.html
+
+# Ver reporte HTML (Windows)
+start build/reports/jacoco/test/html/index.html
+```
+
+#### 5. **Métricas de Cobertura**
+
+JaCoCo reporta las siguientes métricas:
+
+- **INSTRUCTION**: Cobertura de instrucciones (líneas de código ejecutadas)
+- **BRANCH**: Cobertura de ramas (if/else, switch, etc.)
+- **LINE**: Cobertura de líneas
+- **METHOD**: Cobertura de métodos
+- **CLASS**: Cobertura de clases
+
+#### 6. **Ejemplos de Tests**
+
+Los tests siguen el patrón **AAA (Arrange-Act-Assert)**:
+
+```java
+@ExtendWith(MockitoExtension.class)
+class UserServiceTest {
+    
+    @Mock
+    private UserRepositoryPort userRepositoryPort;
+    
+    @InjectMocks
+    private UserService userService;
+    
+    @Test
+    @DisplayName("Debería crear un usuario cuando el email y teléfono son únicos")
+    void shouldCreateUserWhenEmailAndPhoneAreUnique() {
+        // Arrange
+        User user = new User("test@example.com", "Test User", "+1234567890", "Address");
+        when(userRepositoryPort.existsByEmail(anyString())).thenReturn(false);
+        when(userRepositoryPort.existsByTelefono(anyString())).thenReturn(false);
+        when(userRepositoryPort.save(any(User.class))).thenReturn(user);
+        
+        // Act
+        User result = userService.create(user);
+        
+        // Assert
+        assertThat(result).isNotNull();
+        assertThat(result.getEmail()).isEqualTo("test@example.com");
+        verify(userRepositoryPort).save(user);
+    }
+}
+```
+
+#### 7. **Documentación de Cobertura**
+
+Cada servicio incluye un archivo `COVERAGE.md` con:
+- Comandos para ejecutar tests y generar reportes
+- Ubicación de los reportes
+- Interpretación de las métricas
+- Troubleshooting común
+
+### Servicios con Tests Implementados
+
+- ✅ **users-service**: Tests completos para UserService, AuthService, JwtTokenService, PasswordHashService
+- ✅ **catalog-service**: Tests para ProductService y CatalogSettingsService
+- ✅ **orders-service**: Tests para OrderService, CartService y OrderSettingsService
