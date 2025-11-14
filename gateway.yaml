@@ -1,0 +1,556 @@
+openapi: 3.0.0
+info:
+  title: Ecommerce API Gateway
+  version: 1.0.0
+  description: API Gateway for Ecommerce Microservices
+
+servers:
+  - url: https://your-gateway-url.run.app
+    description: API Gateway URL
+
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      name: x-api-key
+      in: header
+      description: API key for authentication
+
+security:
+  - apiKey: []
+
+x-google-api-management:
+  backends:
+    - name: catalog-service
+      address: https://catalog-service-181894084289.us-central1.run.app
+    - name: orders-service
+      address: https://orders-service-181894084289.us-central1.run.app
+    - name: users-service
+      address: https://users-service-181894084289.us-central1.run.app
+
+paths:
+  # -----------------------------
+  # CATALOG SERVICE
+  # -----------------------------
+  /api/v1/catalog/products:
+    get:
+      operationId: getProducts
+      summary: Get all products
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: search
+          in: query
+          schema:
+            type: string
+      x-google-backend:
+        backend: catalog-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+
+    post:
+      operationId: createProduct
+      summary: Create a new product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      x-google-backend:
+        backend: catalog-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/catalog/products/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    get:
+      operationId: getProductById
+      summary: Get product by ID
+      x-google-backend:
+        backend: catalog-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Not Found
+
+    put:
+      operationId: updateProduct
+      summary: Update product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      x-google-backend:
+        backend: catalog-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+
+    delete:
+      operationId: deleteProduct
+      summary: Delete product
+      x-google-backend:
+        backend: catalog-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '204':
+          description: No Content
+
+  /api/v1/catalog/settings:
+    get:
+      operationId: getCatalogSettings
+      summary: Get catalog settings
+      x-google-backend:
+        backend: catalog-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+
+    put:
+      operationId: updateCatalogSettings
+      summary: Update catalog settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      x-google-backend:
+        backend: catalog-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+
+  # -----------------------------
+  # ORDERS SERVICE
+  # -----------------------------
+  /api/v1/orders:
+    post:
+      operationId: createOrder
+      summary: Create a new order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      x-google-backend:
+        backend: orders-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/orders/{orderId}:
+    parameters:
+      - name: orderId
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    get:
+      operationId: getOrderById
+      summary: Get order by ID
+      x-google-backend:
+        backend: orders-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/orders/{orderId}/pay:
+    parameters:
+      - name: orderId
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    post:
+      operationId: markOrderAsPaid
+      summary: Mark order as paid
+      x-google-backend:
+        backend: orders-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/orders/{orderId}/cancel:
+    parameters:
+      - name: orderId
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    post:
+      operationId: cancelOrder
+      summary: Cancel order
+      x-google-backend:
+        backend: orders-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/carts:
+    post:
+      operationId: createCart
+      summary: Create a new cart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      x-google-backend:
+        backend: orders-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/carts/{cartId}:
+    parameters:
+      - name: cartId
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    get:
+      operationId: getCartById
+      summary: Get cart by ID
+      x-google-backend:
+        backend: orders-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/carts/{cartId}/items:
+    parameters:
+      - name: cartId
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    post:
+      operationId: addItemToCart
+      summary: Add item to cart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      x-google-backend:
+        backend: orders-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+
+    delete:
+      operationId: clearCart
+      summary: Clear all items from cart
+      x-google-backend:
+        backend: orders-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/carts/{cartId}/items/{productId}:
+    parameters:
+      - name: cartId
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: productId
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    delete:
+      operationId: removeItemFromCart
+      summary: Remove item from cart
+      x-google-backend:
+        backend: orders-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/payments:
+    post:
+      operationId: registerPayment
+      summary: Register a payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      x-google-backend:
+        backend: orders-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/payments/{paymentId}/complete:
+    parameters:
+      - name: paymentId
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    post:
+      operationId: completePayment
+      summary: Complete a payment
+      x-google-backend:
+        backend: orders-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+
+  # -----------------------------
+  # USERS SERVICE
+  # -----------------------------
+  /api/v1/users:
+    get:
+      operationId: getAllUsers
+      summary: Get all users
+      x-google-backend:
+        backend: users-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+
+    post:
+      operationId: createUser
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      x-google-backend:
+        backend: users-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/users/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    get:
+      operationId: getUserById
+      summary: Get user by ID
+      x-google-backend:
+        backend: users-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Not Found
+
+    put:
+      operationId: updateUser
+      summary: Update user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      x-google-backend:
+        backend: users-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+
+    delete:
+      operationId: deleteUser
+      summary: Delete user
+      x-google-backend:
+        backend: users-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '204':
+          description: No Content
+
+  /api/v1/auth/login:
+    post:
+      operationId: login
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      x-google-backend:
+        backend: users-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+
+  # -----------------------------
+  # HEALTH CHECK ENDPOINTS
+  # -----------------------------
+  /api/v1/ping:
+    get:
+      operationId: ping
+      summary: Health check endpoint
+      security: []
+      x-google-backend:
+        backend: catalog-service
+        path_translation: APPEND_PATH_TO_ADDRESS
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: string
