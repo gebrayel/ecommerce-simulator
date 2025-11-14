@@ -316,21 +316,63 @@ Este proyecto se organiza como un monorepo con los siguientes módulos:
     }'
   ```
 
-## Ejecutar los Servicios
+## Ejecutar el Proyecto
+
+### Prerrequisitos
+
+- **Java 17**: JDK 17 o superior
+- **Gradle**: El proyecto incluye Gradle Wrapper (`./gradlew`), no es necesario instalar Gradle manualmente
+
+Verifica que Java esté instalado:
 
 ```bash
-# Desde la raíz del proyecto
+java -version
+```
+
+### Ejecutar los Servicios Localmente
+
+#### Opción 1: Desde la raíz del proyecto
+
+```bash
+# Ejecutar un servicio específico
 ./gradlew :services:catalog-service:bootRun
 ./gradlew :services:users-service:bootRun
 ./gradlew :services:orders-service:bootRun
+
+# Ejecutar todos los servicios (en terminales separadas)
+./gradlew :services:catalog-service:bootRun &
+./gradlew :services:users-service:bootRun &
+./gradlew :services:orders-service:bootRun &
 ```
 
+#### Opción 2: Desde cada directorio de servicio
+
 ```bash
-# Desde cada servicio
-cd services/catalog-service && ../../gradlew bootRun
-cd services/users-service && ../../gradlew bootRun
-cd services/orders-service && ../../gradlew bootRun
+# Catalog Service
+cd services/catalog-service
+../../gradlew bootRun
+
+# Users Service (en otra terminal)
+cd services/users-service
+../../gradlew bootRun
+
+# Orders Service (en otra terminal)
+cd services/orders-service
+../../gradlew bootRun
 ```
+
+#### Verificar que los servicios están funcionando
+
+Una vez que los servicios estén en ejecución, verifica que respondan:
+
+```bash
+# Health check de cada servicio
+curl http://localhost:8081/api/v1/ping  # Catalog Service
+curl http://localhost:8082/api/v1/ping  # Users Service
+curl http://localhost:8083/api/v1/ping  # Orders Service
+```
+
+Deberías recibir `pong` como respuesta de cada servicio.
 
 ## Ejecutar con Docker y Docker Compose
 
@@ -424,18 +466,6 @@ docker build -t orders-service:latest .
 docker run -p 8083:8083 -e SPRING_PROFILES_ACTIVE=local orders-service:latest
 ```
 
-### Verificar que los Servicios Están Funcionando
-
-Una vez que los contenedores estén en ejecución, verifica que los servicios respondan:
-
-```bash
-# Health check de cada servicio
-curl http://localhost:8081/api/v1/ping
-curl http://localhost:8082/api/v1/ping
-curl http://localhost:8083/api/v1/ping
-```
-
-Deberías recibir `pong` como respuesta de cada servicio.
 
 ### Configuración de Docker Compose
 
@@ -646,30 +676,116 @@ Cada servicio está configurado con **JaCoCo** para medir la cobertura de códig
 
 #### 4. **Ejecución de Tests**
 
+##### Ejecutar tests de un servicio específico
+
 ```bash
-# Ejecutar tests y generar reporte de cobertura
-cd services/[service-name]
-../../gradlew test jacocoTestReport
+# Desde la raíz del proyecto
+./gradlew :services:catalog-service:test
+./gradlew :services:users-service:test
+./gradlew :services:orders-service:test
 
-# Ver reporte HTML (macOS)
-open build/reports/jacoco/test/html/index.html
-
-# Ver reporte HTML (Linux)
-xdg-open build/reports/jacoco/test/html/index.html
-
-# Ver reporte HTML (Windows)
-start build/reports/jacoco/test/html/index.html
+# O desde el directorio del servicio
+cd services/catalog-service
+../../gradlew test
 ```
 
-#### 5. **Métricas de Cobertura**
+##### Ejecutar todos los tests del proyecto
 
-JaCoCo reporta las siguientes métricas:
+```bash
+# Desde la raíz del proyecto
+./gradlew test
+```
+
+##### Ejecutar un test específico
+
+```bash
+# Ejecutar una clase de test específica
+./gradlew :services:users-service:test --tests UserServiceTest
+
+# Ejecutar un método de test específico
+./gradlew :services:users-service:test --tests UserServiceTest.shouldCreateUserWhenEmailAndPhoneAreUnique
+```
+
+##### Ver resultados de los tests
+
+Los resultados de los tests se generan en:
+- **Reportes HTML**: `services/[service-name]/build/reports/tests/test/index.html`
+- **Reportes XML**: `services/[service-name]/build/test-results/test/`
+
+```bash
+# Abrir reporte HTML de tests (macOS)
+open services/catalog-service/build/reports/tests/test/index.html
+
+# Abrir reporte HTML de tests (Linux)
+xdg-open services/catalog-service/build/reports/tests/test/index.html
+
+# Abrir reporte HTML de tests (Windows)
+start services\catalog-service\build\reports\tests\test\index.html
+```
+
+#### 5. **Generar Reportes de Cobertura**
+
+Los reportes de cobertura se generan automáticamente después de ejecutar los tests (gracias a la configuración `finalizedBy(tasks.jacocoTestReport)` en `build.gradle.kts`).
+
+##### Generar reporte de cobertura de un servicio
+
+```bash
+# Desde la raíz del proyecto (ejecuta tests y genera reporte)
+./gradlew :services:catalog-service:test
+./gradlew :services:users-service:test
+./gradlew :services:orders-service:test
+
+# O explícitamente generar el reporte
+./gradlew :services:catalog-service:jacocoTestReport
+./gradlew :services:users-service:jacocoTestReport
+./gradlew :services:orders-service:jacocoTestReport
+```
+
+##### Generar reportes de cobertura de todos los servicios
+
+```bash
+# Desde la raíz del proyecto
+./gradlew test jacocoTestReport
+```
+
+##### Ver reportes de cobertura
+
+Los reportes se generan en:
+- **Reporte HTML**: `services/[service-name]/build/reports/jacoco/test/html/index.html`
+- **Reporte XML**: `services/[service-name]/build/reports/jacoco/test/jacocoTestReport.xml`
+
+```bash
+# Abrir reporte HTML de cobertura (macOS)
+open services/catalog-service/build/reports/jacoco/test/html/index.html
+open services/users-service/build/reports/jacoco/test/html/index.html
+open services/orders-service/build/reports/jacoco/test/html/index.html
+
+# Abrir reporte HTML de cobertura (Linux)
+xdg-open services/catalog-service/build/reports/jacoco/test/html/index.html
+xdg-open services/users-service/build/reports/jacoco/test/html/index.html
+xdg-open services/orders-service/build/reports/jacoco/test/html/index.html
+
+# Abrir reporte HTML de cobertura (Windows)
+start services\catalog-service\build\reports\jacoco\test\html\index.html
+start services\users-service\build\reports\jacoco\test\html\index.html
+start services\orders-service\build\reports\jacoco\test\html\index.html
+```
+
+##### Métricas de Cobertura
+
+JaCoCo reporta las siguientes métricas en los reportes:
 
 - **INSTRUCTION**: Cobertura de instrucciones (líneas de código ejecutadas)
 - **BRANCH**: Cobertura de ramas (if/else, switch, etc.)
 - **LINE**: Cobertura de líneas
 - **METHOD**: Cobertura de métodos
 - **CLASS**: Cobertura de clases
+
+El reporte HTML muestra:
+- Vista general con porcentajes de cobertura por métrica
+- Desglose por paquete
+- Desglose por clase con indicadores de color (verde = cubierto, rojo = no cubierto)
+- Líneas de código resaltadas mostrando qué líneas fueron ejecutadas durante los tests
 
 #### 6. **Ejemplos de Tests**
 
