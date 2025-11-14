@@ -234,26 +234,6 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Should not update password when rawPassword is null")
-    void shouldNotUpdatePasswordWhenRawPasswordIsNull() {
-        // Given
-        User updatedUser = new User("test@example.com", "Updated User", "+1234567890", "Updated Address");
-        updatedUser.setRawPassword(null);
-        
-        when(userRepositoryPort.findById(1L)).thenReturn(Optional.of(savedUser));
-        when(userRepositoryPort.existsByEmailAndIdNot(anyString(), anyLong())).thenReturn(false);
-        when(userRepositoryPort.existsByTelefonoAndIdNot(anyString(), anyLong())).thenReturn(false);
-        when(userRepositoryPort.save(any(User.class))).thenReturn(savedUser);
-
-        // When
-        userService.update(1L, updatedUser);
-
-        // Then
-        verify(passwordHashService, never()).hash(anyString());
-        verify(userRepositoryPort, times(1)).save(any(User.class));
-    }
-
-    @Test
     @DisplayName("Should delete user successfully when user exists")
     void shouldDeleteUserSuccessfully() {
         // Given

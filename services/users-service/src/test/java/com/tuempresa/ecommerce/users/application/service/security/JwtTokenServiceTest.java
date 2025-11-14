@@ -65,7 +65,7 @@ class JwtTokenServiceTest {
 
         // When
         String token1 = jwtTokenService.generateToken(userId, email, extraClaims);
-        Thread.sleep(10); // Small delay to ensure different issuedAt time
+        Thread.sleep(1100); // Delay of more than 1 second to ensure different issuedAt time
         String token2 = jwtTokenService.generateToken(userId, email, extraClaims);
 
         // Then

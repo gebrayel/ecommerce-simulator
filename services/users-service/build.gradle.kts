@@ -1,6 +1,7 @@
 plugins {
     `java`
     id("org.springframework.boot") version "3.5.7"
+    jacoco
 }
 
 java {
@@ -23,4 +24,17 @@ dependencies {
     testImplementation("org.mockito:mockito-core")
     testImplementation("org.mockito:mockito-junit-jupiter")
     testImplementation("org.assertj:assertj-core")
+}
+tasks.test {
+    useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport) // genera el reporte después del test
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
 }

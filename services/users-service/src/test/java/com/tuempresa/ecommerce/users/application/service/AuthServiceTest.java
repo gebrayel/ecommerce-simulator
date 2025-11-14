@@ -20,7 +20,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -68,7 +68,7 @@ class AuthServiceTest {
         assertThat(result.getToken()).isEqualTo(expectedToken);
         verify(userRepositoryPort, times(1)).findByEmail("test@example.com");
         verify(passwordHashService, times(1)).matches("password123", "hashedPassword");
-        verify(jwtTokenService, times(1)).generateToken(1L, "test@example.com", any());
+        verify(jwtTokenService, times(1)).generateToken(eq(1L), eq("test@example.com"), anyMap());
     }
 
     @Test
