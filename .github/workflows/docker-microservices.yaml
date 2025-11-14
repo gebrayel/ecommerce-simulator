@@ -1,0 +1,67 @@
+name: Build & Deploy Microservices to Cloud Run (WIF)
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: us-central1
+  REPOSITORY: my-microservices
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write  # necesario para WIF
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Authenticate to GCP via Workload Identity Federation
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account_email: ${{ secrets.GCP_SA_EMAIL }}
+
+      - name: Configure gcloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Build & Deploy Catalog Service
+        run: |
+          gcloud builds submit ./services/catalog-service \
+            --tag us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/catalog-service:${{ github.sha }}
+
+          gcloud run deploy catalog-service \
+            --image us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/catalog-service:${{ github.sha }} \
+            --region ${{ env.REGION }} --platform managed --allow-unauthenticated
+
+      - name: Build & Deploy Users Service
+        run: |
+          gcloud builds submit ./services/users-service \
+            --tag us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/users-service:${{ github.sha }}
+
+          gcloud run deploy users-service \
+            --image us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/users-service:${{ github.sha }} \
+            --region ${{ env.REGION }} --platform managed --allow-unauthenticated
+
+      - name: Build & Deploy Orders Service
+        run: |
+          gcloud builds submit ./services/orders-service \
+            --tag us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/orders-service:${{ github.sha }}
+
+          gcloud run deploy orders-service \
+            --image us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/orders-service:${{ github.sha }} \
+            --region ${{ env.REGION }} --platform managed --allow-unauthenticated
